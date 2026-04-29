@@ -18,6 +18,18 @@ architecture archBlinky of Blinky is
     signal s_op_b   : std_logic_vector(31 downto 0) := x"00000003"; -- On met 3
     signal s_res    : std_logic_vector(31 downto 0);
     signal s_alu_sel: std_logic_vector(3 downto 0)  := "0000"; -- Addition
+	 
+    signal s_rst         : std_logic;
+    signal s_clk         : std_logic;
+    -- Port d'écriture
+    signal s_w_addr      : std_logic_vector(4 downto 0); 
+    signal s_w_data      : std_logic_vector(31 downto 0);
+    signal s_w_enable    : std_logic;
+    -- Ports de lecture
+    signal s_rs1_addr    : std_logic_vector(4 downto 0);
+    signal s_rs1_data    : std_logic_vector(31 downto 0);
+    signal s_rs2_addr    : std_logic_vector(4 downto 0);
+    signal s_rs2_data    : std_logic_vector(31 downto 0);
 begin	
 	-- On "pose" l'ALU sur notre circuit
     ma_super_alu : entity work.ALU 
@@ -27,6 +39,19 @@ begin
         alu_sel => s_alu_sel,
         res     => s_res,     -- Le résultat sort dans 's_res'
         zero    => open       -- 'open' signifie qu'on ne branche pas ce fil
+    );
+	 
+    mon_super_reg_file : entity work.RegisterFile 
+    port map (
+        rst         => s_rst,
+        clk         => s_clk,
+        w_addr      => s_w_addr,
+        w_data      => s_w_data,
+        w_enable    => s_w_enable,
+        rs1_addr    => s_rs1_addr,
+        rs1_data    => s_rs1_data,
+        rs2_addr    => s_rs2_addr,
+        rs2_data    => s_rs2_data
     );
 
 	process(CLOCK_50)
